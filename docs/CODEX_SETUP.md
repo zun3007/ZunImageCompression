@@ -6,6 +6,7 @@ Reference setup for reinstalling Codex on a new Windows machine for this repo.
 
 - Global Codex config template: [docs/CODEX_CONFIG.example.toml](D:/Project/ZunImageCompress/docs/CODEX_CONFIG.example.toml)
 - Project instructions: [AGENTS.md](D:/Project/ZunImageCompress/AGENTS.md)
+- Personalization guide: [docs/CODEX_PERSONALIZATION.md](D:/Project/ZunImageCompress/docs/CODEX_PERSONALIZATION.md)
 - MCP health checklist: [docs/MCP_CHECKLIST.md](D:/Project/ZunImageCompress/docs/MCP_CHECKLIST.md)
 
 ## Target Paths
@@ -52,6 +53,17 @@ For this repo on the current machine, the expected workspace path is:
 ```text
 D:\Project\ZunImageCompress
 ```
+
+## Personalization Settings
+
+In Codex Desktop `Settings -> Personalization`:
+
+- set `Personality` to `Pragmatic`
+- paste the full content of [AGENTS.md](D:/Project/ZunImageCompress/AGENTS.md) into `Custom instructions`
+
+Reference guide:
+
+- [docs/CODEX_PERSONALIZATION.md](D:/Project/ZunImageCompress/docs/CODEX_PERSONALIZATION.md)
 
 ## Why These MCP Servers
 
