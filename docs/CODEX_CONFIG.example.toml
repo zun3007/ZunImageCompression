@@ -14,7 +14,7 @@ sandbox = "elevated"
 args = ["-y", "@playwright/mcp@latest", "--browser", "msedge"]
 command = "npx"
 enabled = true
-cwd = "D:\\Project\\ZunImageCompress"
+cwd = "C:\\path\\to\\your\\workspace\\ZunImageCompression"
 
 [mcp_servers.codex]
 args = ["mcp-server"]
@@ -42,7 +42,7 @@ command = "npx"
 enabled = true
 
 [mcp_servers.filesystem]
-args = ["-y", "@modelcontextprotocol/server-filesystem", "D:\\Project\\ZunImageCompress"]
+args = ["-y", "@modelcontextprotocol/server-filesystem", "C:\\path\\to\\your\\workspace\\ZunImageCompression"]
 command = "npx"
 enabled = true
 

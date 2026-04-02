@@ -4,17 +4,17 @@ Reference setup for reinstalling Codex on a new Windows machine for this repo.
 
 ## Files To Restore
 
-- Global Codex config template: [docs/CODEX_CONFIG.example.toml](D:/Project/ZunImageCompress/docs/CODEX_CONFIG.example.toml)
-- Project instructions: [AGENTS.md](D:/Project/ZunImageCompress/AGENTS.md)
-- Personalization guide: [docs/CODEX_PERSONALIZATION.md](D:/Project/ZunImageCompress/docs/CODEX_PERSONALIZATION.md)
-- MCP health checklist: [docs/MCP_CHECKLIST.md](D:/Project/ZunImageCompress/docs/MCP_CHECKLIST.md)
+- Global Codex config template: [docs/CODEX_CONFIG.example.toml](./CODEX_CONFIG.example.toml)
+- Project instructions: [AGENTS.md](../AGENTS.md)
+- Personalization guide: [docs/CODEX_PERSONALIZATION.md](./CODEX_PERSONALIZATION.md)
+- MCP health checklist: [docs/MCP_CHECKLIST.md](./MCP_CHECKLIST.md)
 
 ## Target Paths
 
 - Codex global config:
-  - `C:\Users\<YourUser>\.codex\config.toml`
+  - `%USERPROFILE%\.codex\config.toml`
 - Repo instructions:
-  - clone repo so [AGENTS.md](D:/Project/ZunImageCompress/AGENTS.md) stays at project root
+  - clone repo so [AGENTS.md](../AGENTS.md) stays at project root
 
 ## One-Time Machine Requirements
 
@@ -37,10 +37,10 @@ After setting it, fully restart Codex Desktop.
 
 ## Recommended Global Config
 
-Copy [docs/CODEX_CONFIG.example.toml](D:/Project/ZunImageCompress/docs/CODEX_CONFIG.example.toml) into:
+Copy [docs/CODEX_CONFIG.example.toml](./CODEX_CONFIG.example.toml) into:
 
 ```text
-C:\Users\<YourUser>\.codex\config.toml
+%USERPROFILE%\.codex\config.toml
 ```
 
 Then adjust these values if needed:
@@ -48,10 +48,10 @@ Then adjust these values if needed:
 - `cwd` under `playwright`
 - workspace path under `filesystem`
 
-For this repo on the current machine, the expected workspace path is:
+Use your local clone path for this repository, for example:
 
 ```text
-D:\Project\ZunImageCompress
+C:\Projects\ZunImageCompression
 ```
 
 ## Personalization Settings
@@ -59,11 +59,11 @@ D:\Project\ZunImageCompress
 In Codex Desktop `Settings -> Personalization`:
 
 - set `Personality` to `Pragmatic`
-- paste the full content of [AGENTS.md](D:/Project/ZunImageCompress/AGENTS.md) into `Custom instructions`
+- paste the full content of [AGENTS.md](../AGENTS.md) into `Custom instructions`
 
 Reference guide:
 
-- [docs/CODEX_PERSONALIZATION.md](D:/Project/ZunImageCompress/docs/CODEX_PERSONALIZATION.md)
+- [docs/CODEX_PERSONALIZATION.md](./CODEX_PERSONALIZATION.md)
 
 ## Why These MCP Servers
 
@@ -87,13 +87,13 @@ Reference guide:
 Run these checks from a fresh Codex thread:
 
 1. `github`
-   - search `zun3007/ZunImageCompression`
+   - search your target repository or fetch one known repo
 2. `context7`
    - resolve `fastify`
 3. `memory`
    - read graph
 4. `sqlite`
-   - list databases in `C:\Users\<YourUser>\.codex`
+   - list databases in `%USERPROFILE%\.codex`
 5. `filesystem`
    - list allowed directories
 6. `sequential_thinking`
@@ -119,7 +119,7 @@ Run these checks from a fresh Codex thread:
 
 ## Recovery Flow
 
-1. Restore [docs/CODEX_CONFIG.example.toml](D:/Project/ZunImageCompress/docs/CODEX_CONFIG.example.toml) into Codex config.
+1. Restore [docs/CODEX_CONFIG.example.toml](./CODEX_CONFIG.example.toml) into Codex config.
 2. Set `GITHUB_PERSONAL_ACCESS_TOKEN`.
 3. Restart Codex Desktop.
 4. Open a new thread.

@@ -4,7 +4,7 @@ Short checklist for keeping Codex Desktop MCP servers healthy on this machine.
 
 ## Source Of Truth
 
-- Global config path: `C:\Users\Zun\.codex\config.toml`
+- Global config path: `%USERPROFILE%\.codex\config.toml`
 - After editing `config.toml`, fully restart Codex Desktop.
 - Open a new thread after restart so the tool list is rebuilt.
 
@@ -15,7 +15,7 @@ Short checklist for keeping Codex Desktop MCP servers healthy on this machine.
 args = ["-y", "@playwright/mcp@latest", "--browser", "msedge"]
 command = "npx"
 enabled = true
-cwd = "D:\\Project\\ZunImageCompress"
+cwd = "C:\\path\\to\\your\\workspace\\ZunImageCompression"
 
 [mcp_servers.github]
 args = ["-y", "@modelcontextprotocol/server-github"]
@@ -44,7 +44,7 @@ command = "npx"
 enabled = true
 
 [mcp_servers.filesystem]
-args = ["-y", "@modelcontextprotocol/server-filesystem", "D:\\Project\\ZunImageCompress"]
+args = ["-y", "@modelcontextprotocol/server-filesystem", "C:\\path\\to\\your\\workspace\\ZunImageCompression"]
 command = "npx"
 enabled = true
 ```
@@ -123,7 +123,7 @@ Use these checks after config changes:
   - `@modelcontextprotocol/server-sqlite` is not published on npm for this setup.
   - `mcp-sqlite-server` is the working package.
 - `filesystem` needs at least one allowed directory.
-  - This machine is scoped to `D:\Project\ZunImageCompress`.
+  - Point it at your local repository path.
 - MCP changes usually do not apply to the current thread.
 
 ## Quick Recovery Flow

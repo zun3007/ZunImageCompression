@@ -19,11 +19,11 @@ Monorepo scaffold for an async image compression platform.
 
 ## Docs
 
-- Backend API docs: [Backend/docs/API.md](D:/Project/ZunImageCompress/Backend/docs/API.md)
-- Codex setup: [docs/CODEX_SETUP.md](D:/Project/ZunImageCompress/docs/CODEX_SETUP.md)
-- Codex config template: [docs/CODEX_CONFIG.example.toml](D:/Project/ZunImageCompress/docs/CODEX_CONFIG.example.toml)
-- Codex personalization: [docs/CODEX_PERSONALIZATION.md](D:/Project/ZunImageCompress/docs/CODEX_PERSONALIZATION.md)
-- MCP maintenance checklist: [docs/MCP_CHECKLIST.md](D:/Project/ZunImageCompress/docs/MCP_CHECKLIST.md)
+- Backend API docs: [Backend/docs/API.md](./Backend/docs/API.md)
+- Codex setup: [docs/CODEX_SETUP.md](./docs/CODEX_SETUP.md)
+- Codex config template: [docs/CODEX_CONFIG.example.toml](./docs/CODEX_CONFIG.example.toml)
+- Codex personalization: [docs/CODEX_PERSONALIZATION.md](./docs/CODEX_PERSONALIZATION.md)
+- MCP maintenance checklist: [docs/MCP_CHECKLIST.md](./docs/MCP_CHECKLIST.md)
 - Swagger UI: `http://127.0.0.1:3000/docs`
 - OpenAPI JSON: `http://127.0.0.1:3000/docs/json`
 
@@ -56,7 +56,7 @@ Monorepo scaffold for an async image compression platform.
 
 ## Docker
 
-Production-friendly defaults live in [Backend/.env.production](D:/Project/ZunImageCompress/Backend/.env.production).
+Production-friendly defaults live in [Backend/.env.production](./Backend/.env.production).
 
 Start the full stack:
 
@@ -70,7 +70,7 @@ Services:
 - Swagger UI: `http://127.0.0.1:3000/docs`
 - OpenAPI JSON: `http://127.0.0.1:3000/docs/json`
 
-Use [docker-compose.yml](D:/Project/ZunImageCompress/docker-compose.yml) for local container orchestration and [Backend/Dockerfile](D:/Project/ZunImageCompress/Backend/Dockerfile) for both `api` and `worker` images.
+Use [docker-compose.yml](./docker-compose.yml) for local container orchestration and [Backend/Dockerfile](./Backend/Dockerfile) for both `api` and `worker` images.
 
 ## Notes
 
