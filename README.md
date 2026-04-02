@@ -20,6 +20,9 @@ Monorepo scaffold for an async image compression platform.
 ## Docs
 
 - Backend API docs: [Backend/docs/API.md](D:/Project/ZunImageCompress/Backend/docs/API.md)
+- Codex setup: [docs/CODEX_SETUP.md](D:/Project/ZunImageCompress/docs/CODEX_SETUP.md)
+- Codex config template: [docs/CODEX_CONFIG.example.toml](D:/Project/ZunImageCompress/docs/CODEX_CONFIG.example.toml)
+- MCP maintenance checklist: [docs/MCP_CHECKLIST.md](D:/Project/ZunImageCompress/docs/MCP_CHECKLIST.md)
 - Swagger UI: `http://127.0.0.1:3000/docs`
 - OpenAPI JSON: `http://127.0.0.1:3000/docs/json`
 

@@ -1,0 +1,53 @@
+model = "gpt-5.4"
+model_reasoning_effort = "high"
+personality = "pragmatic"
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
+
+[features]
+multi_agent = true
+
+[windows]
+sandbox = "elevated"
+
+[mcp_servers.playwright]
+args = ["-y", "@playwright/mcp@latest", "--browser", "msedge"]
+command = "npx"
+enabled = true
+cwd = "D:\\Project\\ZunImageCompress"
+
+[mcp_servers.codex]
+args = ["mcp-server"]
+command = "codex"
+enabled = true
+
+[mcp_servers.sqlite]
+args = ["-y", "mcp-sqlite-server"]
+command = "npx"
+enabled = true
+
+[mcp_servers.context7]
+args = ["-y", "@upstash/context7-mcp"]
+command = "npx"
+enabled = true
+
+[mcp_servers.memory]
+args = ["-y", "@modelcontextprotocol/server-memory"]
+command = "npx"
+enabled = true
+
+[mcp_servers.sequential_thinking]
+args = ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+command = "npx"
+enabled = true
+
+[mcp_servers.filesystem]
+args = ["-y", "@modelcontextprotocol/server-filesystem", "D:\\Project\\ZunImageCompress"]
+command = "npx"
+enabled = true
+
+[mcp_servers.github]
+args = ["-y", "@modelcontextprotocol/server-github"]
+command = "npx"
+enabled = true
+env_vars = ["GITHUB_PERSONAL_ACCESS_TOKEN"]
