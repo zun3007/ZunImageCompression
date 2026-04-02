@@ -1,0 +1,16 @@
+{
+  "name": "zun-image-compression",
+  "private": true,
+  "workspaces": [
+    "Backend",
+    "Frontend"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace Backend",
+    "dev:api": "npm run dev:api --workspace Backend",
+    "dev:worker": "npm run dev:worker --workspace Backend",
+    "lint": "npm run lint --workspace Backend",
+    "test": "npm run test --workspace Backend",
+    "typecheck": "npm run typecheck --workspace Backend"
+  }
+}

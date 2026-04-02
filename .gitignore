@@ -1,0 +1,8 @@
+node_modules/
+Backend/node_modules/
+Frontend/node_modules/
+Backend/dist/
+Backend/coverage/
+Backend/.data/
+Backend/.env
+*.log
