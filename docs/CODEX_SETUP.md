@@ -45,6 +45,7 @@ Copy [docs/CODEX_CONFIG.example.toml](./CODEX_CONFIG.example.toml) into:
 
 Then adjust these values if needed:
 
+- `instructions`
 - `cwd` under `playwright`
 - workspace path under `filesystem`
 
@@ -64,6 +65,11 @@ In Codex Desktop `Settings -> Personalization`:
 Reference guide:
 
 - [docs/CODEX_PERSONALIZATION.md](./CODEX_PERSONALIZATION.md)
+
+Note:
+
+- the same instruction set is also embedded in [docs/CODEX_CONFIG.example.toml](./CODEX_CONFIG.example.toml)
+- if you prefer file-based setup over the UI, keep `config.toml` and `AGENTS.md` aligned
 
 ## Why These MCP Servers
 
