@@ -17,6 +17,12 @@ Monorepo scaffold for an async image compression platform.
 - Swagger UI and OpenAPI JSON for easier API testing
 - Dockerized API, worker, and Redis stack
 
+## Docs
+
+- Backend API docs: [Backend/docs/API.md](D:/Project/ZunImageCompress/Backend/docs/API.md)
+- Swagger UI: `http://127.0.0.1:3000/docs`
+- OpenAPI JSON: `http://127.0.0.1:3000/docs/json`
+
 ## Quick start
 
 1. Install dependencies:
