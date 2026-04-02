@@ -249,4 +249,16 @@ describe("Fastify image job API", () => {
 
     expect(response.statusCode).toBe(410);
   });
+
+  it("serves the OpenAPI document for easier manual testing", async () => {
+    const context = await createContext();
+
+    const response = await context.app.inject({
+      method: "GET",
+      url: "/docs/json"
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json().openapi).toBe("3.0.3");
+  });
 });

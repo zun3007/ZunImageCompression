@@ -5,6 +5,7 @@ import { z } from "zod";
 
 export type AppConfig = {
   port: number;
+  host: string;
   redisUrl: string;
   uploadTmpDir: string;
   artifactDir: string;
@@ -18,10 +19,14 @@ export type AppConfig = {
   jobRemoveOnFailAge: number;
   queueName: string;
   jobRecordGraceSeconds: number;
+  appBaseUrl: string;
+  swaggerEnabled: boolean;
+  swaggerRoutePrefix: string;
 };
 
 const envSchema = z.object({
   PORT: z.coerce.number().int().positive().default(3000),
+  HOST: z.string().min(1).default("0.0.0.0"),
   REDIS_URL: z.string().min(1).default("redis://127.0.0.1:6379"),
   UPLOAD_TMP_DIR: z.string().min(1).default(".data/uploads"),
   ARTIFACT_DIR: z.string().min(1).default(".data/artifacts"),
@@ -32,7 +37,10 @@ const envSchema = z.object({
   JOB_ATTEMPTS: z.coerce.number().int().positive().default(3),
   JOB_BACKOFF_MS: z.coerce.number().int().nonnegative().default(1_000),
   JOB_REMOVE_ON_COMPLETE_AGE: z.coerce.number().int().positive().default(86_400),
-  JOB_REMOVE_ON_FAIL_AGE: z.coerce.number().int().positive().default(86_400)
+  JOB_REMOVE_ON_FAIL_AGE: z.coerce.number().int().positive().default(86_400),
+  APP_BASE_URL: z.string().url().default("http://127.0.0.1:3000"),
+  SWAGGER_ENABLED: z.enum(["true", "false"]).default("true").transform((value) => value === "true"),
+  SWAGGER_ROUTE_PREFIX: z.string().min(1).default("/docs")
 });
 
 const backendRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -42,6 +50,7 @@ export const loadConfig = (): AppConfig => {
 
   return {
     port: env.PORT,
+    host: env.HOST,
     redisUrl: env.REDIS_URL,
     uploadTmpDir: resolve(backendRoot, env.UPLOAD_TMP_DIR),
     artifactDir: resolve(backendRoot, env.ARTIFACT_DIR),
@@ -54,7 +63,10 @@ export const loadConfig = (): AppConfig => {
     jobRemoveOnCompleteAge: env.JOB_REMOVE_ON_COMPLETE_AGE,
     jobRemoveOnFailAge: env.JOB_REMOVE_ON_FAIL_AGE,
     queueName: "image-processing",
-    jobRecordGraceSeconds: env.ARTIFACT_TTL_SECONDS + 3_600
+    jobRecordGraceSeconds: env.ARTIFACT_TTL_SECONDS + 3_600,
+    appBaseUrl: env.APP_BASE_URL,
+    swaggerEnabled: env.SWAGGER_ENABLED,
+    swaggerRoutePrefix: env.SWAGGER_ROUTE_PREFIX
   };
 };
 

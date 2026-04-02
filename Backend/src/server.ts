@@ -45,7 +45,7 @@ const bootstrap = async () => {
   process.on("SIGTERM", () => void shutdown().finally(() => process.exit(0)));
 
   await app.listen({
-    host: "0.0.0.0",
+    host: config.host,
     port: config.port
   });
 };

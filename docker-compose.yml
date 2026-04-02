@@ -1,0 +1,49 @@
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - redis-data:/data
+
+  api:
+    build:
+      context: .
+      dockerfile: Backend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+    env_file:
+      - Backend/.env.production
+    command: ["node", "Backend/dist/server.js"]
+    ports:
+      - "3000:3000"
+    volumes:
+      - backend-upload-data:/app/Backend/.data/uploads
+      - backend-artifact-data:/app/Backend/.data/artifacts
+
+  worker:
+    build:
+      context: .
+      dockerfile: Backend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+    env_file:
+      - Backend/.env.production
+    command: ["node", "Backend/dist/worker.js"]
+    volumes:
+      - backend-upload-data:/app/Backend/.data/uploads
+      - backend-artifact-data:/app/Backend/.data/artifacts
+
+volumes:
+  redis-data:
+  backend-upload-data:
+  backend-artifact-data:

@@ -70,6 +70,7 @@ export const createTestConfig = async (
   const rootDir = await mkdtemp(join(tmpdir(), "zun-image-compression-"));
   const config: AppConfig = {
     port: 0,
+    host: "127.0.0.1",
     redisUrl: "memory://",
     uploadTmpDir: join(rootDir, "uploads"),
     artifactDir: join(rootDir, "artifacts"),
@@ -83,6 +84,9 @@ export const createTestConfig = async (
     jobRemoveOnFailAge: 86_400,
     queueName: "test-queue",
     jobRecordGraceSeconds: 3_600,
+    appBaseUrl: "http://127.0.0.1:3000",
+    swaggerEnabled: true,
+    swaggerRoutePrefix: "/docs",
     ...overrides
   };
 

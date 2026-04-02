@@ -2,6 +2,12 @@ import { randomUUID } from "node:crypto";
 
 import type { FastifyInstance } from "fastify";
 
+import {
+  createJobDocBodySchema,
+  createJobSchema,
+  downloadJobItemSchema,
+  getJobSchema
+} from "../docs/schemas.js";
 import { parseJobOptions } from "../domain/options.js";
 import { AppError } from "../errors.js";
 import { cleanupUploads, collectUploads } from "../http/uploads.js";
@@ -47,8 +53,8 @@ const toPublicJob = (job: JobRecord) => ({
   }))
 });
 
-export const registerJobRoutes = (
-  app: FastifyInstance,
+export const registerJobRoutes = <TApp extends FastifyInstance>(
+  app: TApp,
   dependencies: {
     config: AppConfig;
     repository: JobRepository;
@@ -56,7 +62,28 @@ export const registerJobRoutes = (
     artifactStorage: LocalArtifactStorage;
   }
 ): void => {
-  app.post("/v1/jobs", async (request, reply) => {
+  app.post(
+    "/v1/jobs",
+    {
+      schema: createJobSchema,
+      config: {
+        swaggerTransform: (({
+          schema,
+          url
+        }: {
+          schema: Record<string, unknown>;
+          url: string;
+        }) => ({
+          url,
+          schema: {
+            ...schema,
+            consumes: ["multipart/form-data"],
+            body: createJobDocBodySchema
+          }
+        })) as never
+      }
+    },
+    async (request, reply) => {
     const { config, queue, repository } = dependencies;
     let uploadedFiles: UploadedFile[] = [];
 
@@ -125,9 +152,10 @@ export const registerJobRoutes = (
       await cleanupUploads(uploadedFiles);
       throw error;
     }
-  });
+    }
+  );
 
-  app.get("/v1/jobs/:jobId", async (request) => {
+  app.get("/v1/jobs/:jobId", { schema: getJobSchema }, async (request) => {
     const params = request.params as { jobId: string };
     const job = await dependencies.repository.get(params.jobId);
 
@@ -138,7 +166,10 @@ export const registerJobRoutes = (
     return toPublicJob(job);
   });
 
-  app.get("/v1/jobs/:jobId/items/:itemId/file", async (request, reply) => {
+  app.get(
+    "/v1/jobs/:jobId/items/:itemId/file",
+    { schema: downloadJobItemSchema },
+    async (request, reply) => {
     const params = request.params as { jobId: string; itemId: string };
     const job = await dependencies.repository.get(params.jobId);
 
@@ -168,6 +199,7 @@ export const registerJobRoutes = (
     reply.header("Content-Length", String(item.output.bytes));
     reply.header("Content-Disposition", `inline; filename="${item.output.filename}"`);
 
-    return reply.send(dependencies.artifactStorage.openReadStream(item.output.artifactPath));
-  });
+      return reply.send(dependencies.artifactStorage.openReadStream(item.output.artifactPath));
+    }
+  );
 };

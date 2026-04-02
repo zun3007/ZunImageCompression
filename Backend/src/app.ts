@@ -1,7 +1,9 @@
 import multipart from "@fastify/multipart";
 import Fastify from "fastify";
 
+import { registerOpenApi } from "./docs/openapi.js";
 import { getErrorMessage, isAppError } from "./errors.js";
+import { cleanupTrackedUploads, createMultipartOnFileHandler } from "./http/uploads.js";
 import { registerHealthRoutes, type HealthCheck } from "./routes/health.js";
 import { registerJobRoutes } from "./routes/jobs.js";
 import type { AppConfig } from "./config.js";
@@ -17,11 +19,17 @@ export const createApp = async (dependencies: {
   healthCheck: HealthCheck;
 }) => {
   const app = Fastify({
-    logger: true
+    logger: true,
+    ajv: {
+      plugins: [multipart.ajvFilePlugin as never]
+    }
   });
 
+  await registerOpenApi(app, dependencies.config);
+
   await app.register(multipart, {
-    attachFieldsToBody: false,
+    attachFieldsToBody: true,
+    onFile: createMultipartOnFileHandler(dependencies.config),
     limits: {
       fileSize: dependencies.config.maxUploadFileSize,
       files: dependencies.config.maxFilesPerJob
@@ -32,6 +40,8 @@ export const createApp = async (dependencies: {
   registerJobRoutes(app, dependencies);
 
   app.setErrorHandler((error, _request, reply) => {
+    void cleanupTrackedUploads(_request);
+
     if (isAppError(error)) {
       return reply.code(error.statusCode).send({
         error: error.message
