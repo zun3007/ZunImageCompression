@@ -12,5 +12,9 @@
     "lint": "npm run lint --workspace Backend",
     "test": "npm run test --workspace Backend",
     "typecheck": "npm run typecheck --workspace Backend"
+  },
+  "devDependencies": {
+    "butteraugli": "^0.0.2",
+    "cwebp-bin": "^8.0.0"
   }
 }
