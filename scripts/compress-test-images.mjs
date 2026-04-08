@@ -19,6 +19,9 @@ const supportedExtensions = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif", 
 const largeAssetMinDimension = 1920;
 const uiAssetMaxDimension = 1024;
 const uiAssetMaxBytes = 256 * 1024;
+const uiIconTargetMaxBytes = 120 * 1024;
+const mediumArtTargetMaxBytes = 250 * 1024;
+const heroBackgroundTargetMaxBytes = 450 * 1024;
 const uiSsimThreshold = 98.5;
 const largeAssetButteraugliProxyWidth = 640;
 const largeAssetButteraugliDelta = 0.07;
@@ -204,6 +207,28 @@ const buildPreparedSource = async (profile, tempDir) => {
   return preparedPath;
 };
 
+const getByteBudgetForProfile = (profile) => {
+  if (profile.isUiLike) {
+    return {
+      targetMaxBytes: uiIconTargetMaxBytes,
+      tier: "ui-icon"
+    };
+  }
+
+  const maxDimension = Math.max(profile.trimmedWidth, profile.trimmedHeight);
+  if (maxDimension <= largeAssetMinDimension) {
+    return {
+      targetMaxBytes: mediumArtTargetMaxBytes,
+      tier: "medium-art"
+    };
+  }
+
+  return {
+    targetMaxBytes: heroBackgroundTargetMaxBytes,
+    tier: "hero-background"
+  };
+};
+
 const parseCwebpMetric = (stderr) => {
   const ssimMatch = stderr.match(/Total:([0-9.]+)/);
   return {
@@ -247,53 +272,48 @@ const runCwebp = async (preparedInputPath, args, tempDir, outputName) => {
 
 const buildUiCandidatePlans = (profile) => {
   const alphaArgs = profile.effectiveHasAlpha ? ["-alpha_q", "100", "-exact"] : [];
+  const commonArgs = ["-m", "6", "-mt", "-af", "-sharp_yuv"];
 
   return [
     {
       strategy: "lossless-ui",
-      args: ["-lossless", "-m", "6", "-mt", ...alphaArgs]
+      args: ["-lossless", ...commonArgs, ...alphaArgs]
     },
     {
       strategy: "near-lossless-ui-100",
-      args: ["-near_lossless", "100", "-m", "6", "-mt", ...alphaArgs]
+      args: ["-near_lossless", "100", ...commonArgs, ...alphaArgs]
     },
     {
       strategy: "near-lossless-ui-80",
-      args: ["-near_lossless", "80", "-m", "6", "-mt", ...alphaArgs]
+      args: ["-near_lossless", "80", ...commonArgs, ...alphaArgs]
+    },
+    {
+      strategy: "ui-lossy-q100-sns80",
+      args: ["-q", "100", "-sns", "80", ...commonArgs, ...alphaArgs]
+    },
+    {
+      strategy: "ui-lossy-q95-sns80",
+      args: ["-q", "95", "-sns", "80", ...commonArgs, ...alphaArgs]
     }
   ];
 };
 
-const buildLargeAssetCandidatePlans = () => [
-  {
-    strategy: "large-art-q100",
-    args: ["-preset", "picture", "-q", "100", "-m", "6", "-mt", "-af", "-sharp_yuv"]
-  },
-  {
-    strategy: "large-art-q96",
-    args: ["-preset", "picture", "-q", "96", "-m", "6", "-mt", "-af", "-sharp_yuv"]
-  },
-  {
-    strategy: "large-art-q94",
-    args: ["-preset", "picture", "-q", "94", "-m", "6", "-mt", "-af", "-sharp_yuv"]
-  },
-  {
-    strategy: "large-art-q92",
-    args: ["-preset", "picture", "-q", "92", "-m", "6", "-mt", "-af", "-sharp_yuv"]
-  },
-  {
-    strategy: "large-art-q90",
-    args: ["-preset", "picture", "-q", "90", "-m", "6", "-mt", "-af", "-sharp_yuv"]
-  },
-  {
-    strategy: "large-art-q88",
-    args: ["-preset", "picture", "-q", "88", "-m", "6", "-mt", "-af", "-sharp_yuv"]
-  },
-  {
-    strategy: "large-art-q86",
-    args: ["-preset", "picture", "-q", "86", "-m", "6", "-mt", "-af", "-sharp_yuv"]
+const buildLargeAssetCandidatePlans = () => {
+  const qualities = [100, 96, 94, 92, 90, 88, 86];
+  const snsStrengths = [80, 50];
+  const plans = [];
+
+  for (const quality of qualities) {
+    for (const sns of snsStrengths) {
+      plans.push({
+        strategy: `large-art-q${quality}-sns${sns}`,
+        args: ["-preset", "picture", "-q", String(quality), "-sns", String(sns), "-m", "6", "-mt", "-af", "-sharp_yuv"]
+      });
+    }
   }
-];
+
+  return plans;
+};
 
 const evaluateCandidates = async (profile, preparedInputPath, tempDir) => {
   const plans = profile.isUiLike || profile.effectiveHasAlpha
@@ -328,7 +348,24 @@ const evaluateCandidates = async (profile, preparedInputPath, tempDir) => {
 };
 
 const selectBestCandidate = (profile, candidates) => {
+  const budget = getByteBudgetForProfile(profile);
+  const withinBudget = candidates.filter((candidate) => candidate.bytes <= budget.targetMaxBytes);
+
   if (profile.isUiLike || profile.effectiveHasAlpha) {
+    const budgetedByQuality = [...withinBudget].sort(
+      (left, right) => (right.ssim ?? 0) - (left.ssim ?? 0) || left.bytes - right.bytes
+    );
+
+    if (budgetedByQuality.length > 0) {
+      return {
+        strategyType: "ui-perceptual-ranking-with-byte-budget",
+        threshold: uiSsimThreshold,
+        byteBudget: budget.targetMaxBytes,
+        byteBudgetTier: budget.tier,
+        selected: budgetedByQuality[0]
+      };
+    }
+
     const acceptable = candidates
       .filter((candidate) => (candidate.ssim ?? 0) >= uiSsimThreshold)
       .sort((left, right) => left.bytes - right.bytes || (right.ssim ?? 0) - (left.ssim ?? 0));
@@ -336,11 +373,34 @@ const selectBestCandidate = (profile, candidates) => {
     return {
       strategyType: "ui-perceptual-threshold",
       threshold: uiSsimThreshold,
+      byteBudget: budget.targetMaxBytes,
+      byteBudgetTier: budget.tier,
       selected: acceptable[0] ?? [...candidates].sort((left, right) => left.bytes - right.bytes)[0]
     };
   }
 
-  const baseline = candidates.find((candidate) => candidate.strategy === "large-art-q100") ?? candidates[0];
+  const baseline =
+    candidates.find((candidate) => candidate.strategy === "large-art-q100-sns80") ??
+    candidates.find((candidate) => candidate.strategy === "large-art-q100-sns50") ??
+    candidates[0];
+
+  const budgetedByQuality = [...withinBudget].sort(
+    (left, right) =>
+      (left.butteraugli ?? Number.POSITIVE_INFINITY) -
+        (right.butteraugli ?? Number.POSITIVE_INFINITY) || left.bytes - right.bytes
+  );
+
+  if (budgetedByQuality.length > 0) {
+    return {
+      strategyType: "large-art-perceptual-ranking-with-byte-budget",
+      baselineSsim: baseline.ssim,
+      baselineButteraugli: baseline.butteraugli,
+      byteBudget: budget.targetMaxBytes,
+      byteBudgetTier: budget.tier,
+      selected: budgetedByQuality[0]
+    };
+  }
+
   const bestButteraugli = Math.min(...candidates.map((candidate) => candidate.butteraugli ?? Number.POSITIVE_INFINITY));
   const threshold = bestButteraugli + largeAssetButteraugliDelta;
   const acceptable = candidates
@@ -356,6 +416,8 @@ const selectBestCandidate = (profile, candidates) => {
     baselineSsim: baseline.ssim,
     baselineButteraugli: baseline.butteraugli,
     threshold,
+    byteBudget: budget.targetMaxBytes,
+    byteBudgetTier: budget.tier,
     selected: acceptable[0] ?? baseline
   };
 };
@@ -392,6 +454,7 @@ const main = async () => {
       encoder: "cwebp",
       uiMetric: "cwebp -print_ssim",
       largeAssetMetric: `Butteraugli proxy search at ${largeAssetButteraugliProxyWidth}px wide`,
+      webGameTarget: `Use per-asset budget tiers: UI/Icon <= ${(uiIconTargetMaxBytes / 1024).toFixed(0)} KiB, Medium art <= ${(mediumArtTargetMaxBytes / 1024).toFixed(0)} KiB, Hero/Background <= ${(heroBackgroundTargetMaxBytes / 1024).toFixed(0)} KiB.`,
       uiAssets: `Pick the smallest candidate whose SSIM stays at or above ${uiSsimThreshold}.`,
       largeAssets: `Trim transparent border, resize long edge to ${largeAssetMinDimension}px when larger, then pick the smallest candidate within ${largeAssetButteraugliDelta.toFixed(2)} Butteraugli distance of the best candidate on the ${largeAssetButteraugliProxyWidth}px proxy.`,
       note:
