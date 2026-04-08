@@ -28,6 +28,9 @@ const supportedExtensions = new Set([
 const largeAssetMinDimension = 1920;
 const uiAssetMaxDimension = 1024;
 const uiAssetMaxBytes = 256 * 1024;
+const uiIconTargetMaxBytes = 120 * 1024;
+const mediumArtTargetMaxBytes = 250 * 1024;
+const heroBackgroundTargetMaxBytes = 450 * 1024;
 const uiSsimThreshold = 98.5;
 const largeAssetButteraugliProxyWidth = 640;
 const largeAssetButteraugliDelta = 0.07;
@@ -221,6 +224,28 @@ const buildPreparedSource = async (profile, tempDir) => {
   return preparedPath;
 };
 
+const getByteBudgetForProfile = (profile) => {
+  if (profile.isUiLike) {
+    return {
+      targetMaxBytes: uiIconTargetMaxBytes,
+      tier: "ui-icon"
+    };
+  }
+
+  const maxDimension = Math.max(profile.trimmedWidth, profile.trimmedHeight);
+  if (maxDimension <= largeAssetMinDimension) {
+    return {
+      targetMaxBytes: mediumArtTargetMaxBytes,
+      tier: "medium-art"
+    };
+  }
+
+  return {
+    targetMaxBytes: heroBackgroundTargetMaxBytes,
+    tier: "hero-background"
+  };
+};
+
 const parseCwebpMetric = (stderr) => {
   const ssimMatch = stderr.match(/Total:([0-9.]+)/);
   return {
@@ -377,7 +402,24 @@ const evaluateCandidates = async (profile, preparedInputPath, tempDir) => {
 };
 
 const selectBestCandidate = (profile, candidates) => {
+  const budget = getByteBudgetForProfile(profile);
+  const withinBudget = candidates.filter((candidate) => candidate.bytes <= budget.targetMaxBytes);
+
   if (profile.isUiLike || profile.effectiveHasAlpha) {
+    const budgetedByQuality = [...withinBudget].sort(
+      (left, right) => (right.ssim ?? 0) - (left.ssim ?? 0) || left.bytes - right.bytes
+    );
+
+    if (budgetedByQuality.length > 0) {
+      return {
+        strategyType: "ui-perceptual-ranking-with-byte-budget",
+        threshold: uiSsimThreshold,
+        byteBudget: budget.targetMaxBytes,
+        byteBudgetTier: budget.tier,
+        selected: budgetedByQuality[0]
+      };
+    }
+
     const acceptable = candidates
       .filter((candidate) => (candidate.ssim ?? 0) >= uiSsimThreshold)
       .sort(
@@ -391,6 +433,8 @@ const selectBestCandidate = (profile, candidates) => {
       selected:
         acceptable[0] ??
         [...candidates].sort((left, right) => left.bytes - right.bytes)[0],
+      byteBudget: budget.targetMaxBytes,
+      byteBudgetTier: budget.tier,
     };
   }
 
@@ -402,6 +446,23 @@ const selectBestCandidate = (profile, candidates) => {
       (candidate) => candidate.strategy === 'large-art-q100-sns50',
     ) ??
     candidates[0];
+  const budgetedByQuality = [...withinBudget].sort(
+    (left, right) =>
+      (left.butteraugli ?? Number.POSITIVE_INFINITY) -
+        (right.butteraugli ?? Number.POSITIVE_INFINITY) || left.bytes - right.bytes
+  );
+
+  if (budgetedByQuality.length > 0) {
+    return {
+      strategyType: "large-art-perceptual-ranking-with-byte-budget",
+      baselineSsim: baseline.ssim,
+      baselineButteraugli: baseline.butteraugli,
+      byteBudget: budget.targetMaxBytes,
+      byteBudgetTier: budget.tier,
+      selected: budgetedByQuality[0]
+    };
+  }
+
   const bestButteraugli = Math.min(
     ...candidates.map(
       (candidate) => candidate.butteraugli ?? Number.POSITIVE_INFINITY,
@@ -425,7 +486,9 @@ const selectBestCandidate = (profile, candidates) => {
     baselineSsim: baseline.ssim,
     baselineButteraugli: baseline.butteraugli,
     threshold,
-    selected: acceptable[0] ?? baseline,
+    byteBudget: budget.targetMaxBytes,
+    byteBudgetTier: budget.tier,
+    selected: acceptable[0] ?? baseline
   };
 };
 
@@ -463,6 +526,7 @@ const main = async () => {
       encoder: 'cwebp',
       uiMetric: 'cwebp -print_ssim',
       largeAssetMetric: `Butteraugli proxy search at ${largeAssetButteraugliProxyWidth}px wide`,
+      webGameTarget: `Use per-asset budget tiers: UI/Icon <= ${(uiIconTargetMaxBytes / 1024).toFixed(0)} KiB, Medium art <= ${(mediumArtTargetMaxBytes / 1024).toFixed(0)} KiB, Hero/Background <= ${(heroBackgroundTargetMaxBytes / 1024).toFixed(0)} KiB.`,
       uiAssets: `Pick the smallest candidate whose SSIM stays at or above ${uiSsimThreshold}.`,
       largeAssets: `Trim transparent border, resize long edge to ${largeAssetMinDimension}px when larger, then pick the smallest candidate within ${largeAssetButteraugliDelta.toFixed(2)} Butteraugli distance of the best candidate on the ${largeAssetButteraugliProxyWidth}px proxy.`,
       note: 'Near-99% quality and near-99% size reduction cannot be guaranteed simultaneously for every source image. This pipeline uses a stronger practical game-asset tradeoff.',
