@@ -13,13 +13,18 @@ if not exist "Backend\.env" (
   copy /Y "Backend\.env.example" "Backend\.env" >nul
 )
 
-echo [compress] Running automatic compression for images in "test"...
+if not exist "input" (
+  mkdir "input"
+)
+
+echo [compress] Running automatic compression for images in "input"...
 node "scripts\compress-test-images.mjs"
 if errorlevel 1 goto :fail
 
 echo.
 echo [compress] Finished successfully.
-echo [compress] Outputs: "%~dp0test\compressed"
+echo [compress] Inputs:  "%~dp0input"
+echo [compress] Outputs: "%~dp0output"
 pause
 exit /b 0
 

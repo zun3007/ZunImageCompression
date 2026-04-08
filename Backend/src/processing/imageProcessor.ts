@@ -1,20 +1,28 @@
-import sharp, { type Metadata, type Sharp } from "sharp";
+import sharp, { type Metadata, type Sharp } from 'sharp';
 
-import { AppError } from "../errors.js";
+import { AppError } from '../errors.js';
 import {
   type EncodedImage,
   type JobOptions,
   type ProbedImage,
-  type ResolvedOutputFormat
-} from "../types.js";
+  type ResolvedOutputFormat,
+} from '../types.js';
 import {
   getContentTypeForFormat,
   getExtensionForFormat,
   isQualitySearchable,
-  resolveOutputFormat
-} from "./format.js";
+  resolveOutputFormat,
+} from './format.js';
 
-const supportedInputFormats = new Set(["jpeg", "jpg", "png", "webp", "avif", "gif", "tiff"]);
+const supportedInputFormats = new Set([
+  'jpeg',
+  'jpg',
+  'png',
+  'webp',
+  'avif',
+  'gif',
+  'tiff',
+]);
 
 type EncodeCandidate = {
   buffer: Buffer;
@@ -24,7 +32,7 @@ type EncodeCandidate = {
 };
 
 const toProbedImage = (metadata: Metadata): ProbedImage => {
-  const format = metadata.format ?? "unknown";
+  const format = metadata.format ?? 'unknown';
   const pages = metadata.pages ?? 1;
 
   return {
@@ -33,7 +41,7 @@ const toProbedImage = (metadata: Metadata): ProbedImage => {
     height: metadata.height,
     pages,
     hasAlpha: metadata.hasAlpha ?? false,
-    isAnimated: pages > 1
+    isAnimated: pages > 1,
   };
 };
 
@@ -41,9 +49,12 @@ export const probeImage = async (filePath: string): Promise<ProbedImage> => {
   let metadata: Metadata;
 
   try {
-    metadata = await sharp(filePath, { animated: true, failOn: "error" }).metadata();
+    metadata = await sharp(filePath, {
+      animated: true,
+      failOn: 'error',
+    }).metadata();
   } catch {
-    throw new AppError(422, "Input file contains unsupported image format");
+    throw new AppError(422, 'Input file contains unsupported image format');
   }
 
   const image = toProbedImage(metadata);
@@ -56,17 +67,20 @@ export const probeImage = async (filePath: string): Promise<ProbedImage> => {
 };
 
 export class ImageProcessor {
-  public async process(filePath: string, options: JobOptions): Promise<EncodedImage> {
+  public async process(
+    filePath: string,
+    options: JobOptions,
+  ): Promise<EncodedImage> {
     const image = await probeImage(filePath);
 
     if (!options.animation.enabled && image.isAnimated) {
-      throw new AppError(422, "Animated images are disabled for this request");
+      throw new AppError(422, 'Animated images are disabled for this request');
     }
 
     if (image.pages > options.animation.maxFrames) {
       throw new AppError(
         422,
-        `Animated image exceeds the maximum allowed frames (${options.animation.maxFrames})`
+        `Animated image exceeds the maximum allowed frames (${options.animation.maxFrames})`,
       );
     }
 
@@ -80,7 +94,7 @@ export class ImageProcessor {
       height: encoded.height,
       format: resolvedFormat,
       extension: getExtensionForFormat(resolvedFormat),
-      contentType: getContentTypeForFormat(resolvedFormat)
+      contentType: getContentTypeForFormat(resolvedFormat),
     };
   }
 
@@ -88,14 +102,21 @@ export class ImageProcessor {
     filePath: string,
     image: ProbedImage,
     options: JobOptions,
-    format: ResolvedOutputFormat
+    format: ResolvedOutputFormat,
   ): Promise<EncodeCandidate> {
     const targetMaxBytes = options.optimize.targetMaxBytes;
     const lossless = options.output.lossless;
 
     if (!targetMaxBytes || !isQualitySearchable(format, lossless)) {
-      const singlePassQuality = options.output.quality ?? options.optimize.maxQuality;
-      return this.renderVariant(filePath, image, options, format, singlePassQuality);
+      const singlePassQuality =
+        options.output.quality ?? options.optimize.maxQuality;
+      return this.renderVariant(
+        filePath,
+        image,
+        options,
+        format,
+        singlePassQuality,
+      );
     }
 
     const minQuality = options.optimize.minQuality;
@@ -130,7 +151,10 @@ export class ImageProcessor {
       return bestUnderTarget;
     }
 
-    return smallestCandidate ?? this.renderVariant(filePath, image, options, format, minQuality);
+    return (
+      smallestCandidate ??
+      this.renderVariant(filePath, image, options, format, minQuality)
+    );
   }
 
   private async renderVariant(
@@ -138,41 +162,44 @@ export class ImageProcessor {
     image: ProbedImage,
     options: JobOptions,
     format: ResolvedOutputFormat,
-    quality: number
+    quality: number,
   ): Promise<EncodeCandidate> {
     let pipeline = this.createBasePipeline(filePath, image, options);
+    const configuredEffort = options.output.effort;
 
     switch (format) {
-      case "jpeg":
+      case 'jpeg':
         pipeline = pipeline.jpeg({
           quality,
           mozjpeg: true,
           progressive: options.output.progressive,
-          chromaSubsampling: options.output.chromaSubsampling
+          chromaSubsampling: options.output.chromaSubsampling,
         });
         break;
-      case "png":
+      case 'png':
         pipeline = pipeline.png({
           compressionLevel: options.output.compressionLevel ?? 9,
-          progressive: options.output.progressive
+          progressive: options.output.progressive,
         });
         break;
-      case "webp":
+      case 'webp':
         pipeline = pipeline.webp({
           quality,
-          effort: options.output.effort,
-          lossless: options.output.lossless
+          effort:
+            configuredEffort === undefined ? 6 : Math.min(configuredEffort, 6),
+          smartSubsample: true,
+          lossless: options.output.lossless,
         });
         break;
-      case "avif":
+      case 'avif':
         pipeline = pipeline.avif({
           quality,
-          effort: options.output.effort,
+          effort: configuredEffort ?? 9,
           lossless: options.output.lossless,
-          chromaSubsampling: options.output.chromaSubsampling
+          chromaSubsampling: options.output.chromaSubsampling,
         });
         break;
-      case "gif":
+      case 'gif':
         pipeline = pipeline.gif();
         break;
     }
@@ -183,12 +210,19 @@ export class ImageProcessor {
       buffer: data,
       bytes: data.byteLength,
       width: info.width,
-      height: info.height
+      height: info.height,
     };
   }
 
-  private createBasePipeline(filePath: string, image: ProbedImage, options: JobOptions): Sharp {
-    let pipeline = sharp(filePath, { animated: image.isAnimated, failOn: "error" }).rotate();
+  private createBasePipeline(
+    filePath: string,
+    image: ProbedImage,
+    options: JobOptions,
+  ): Sharp {
+    let pipeline = sharp(filePath, {
+      animated: image.isAnimated,
+      failOn: 'error',
+    }).rotate();
 
     if (options.resize) {
       pipeline = pipeline.resize({
@@ -198,7 +232,7 @@ export class ImageProcessor {
         position: options.resize.position,
         withoutEnlargement: options.resize.withoutEnlargement,
         withoutReduction: options.resize.withoutReduction,
-        background: options.resize.background
+        background: options.resize.background,
       });
     }
 

@@ -1,21 +1,30 @@
-import fs from "node:fs";
-import fsp from "node:fs/promises";
-import os from "node:os";
-import path from "node:path";
-import { spawnSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
+import fs from 'node:fs';
+import fsp from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
-import butteraugli from "butteraugli";
-import sharp from "sharp";
-import cwebp from "cwebp-bin";
+import butteraugli from 'butteraugli';
+import sharp from 'sharp';
+import cwebp from 'cwebp-bin';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const repoRoot = path.resolve(__dirname, "..");
-const testDir = path.join(repoRoot, "test");
-const outputDir = path.join(testDir, "compressed");
+const repoRoot = path.resolve(__dirname, '..');
+const inputDir = path.join(repoRoot, 'input');
+const outputDir = path.join(repoRoot, 'output');
 
-const supportedExtensions = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif", ".gif", ".tif", ".tiff"]);
+const supportedExtensions = new Set([
+  '.jpg',
+  '.jpeg',
+  '.png',
+  '.webp',
+  '.avif',
+  '.gif',
+  '.tif',
+  '.tiff',
+]);
 const largeAssetMinDimension = 1920;
 const uiAssetMaxDimension = 1024;
 const uiAssetMaxBytes = 256 * 1024;
@@ -37,7 +46,7 @@ const ensureOutputDirectory = async () => {
 };
 
 const isGeneratedOutput = (entryPath) =>
-  entryPath.toLowerCase().includes(`${path.sep}compressed${path.sep}`);
+  entryPath.toLowerCase().includes(`${path.sep}output${path.sep}`);
 
 const shouldSkipInputFile = (entryName) => /^tmp[-._]/i.test(entryName);
 
@@ -73,7 +82,10 @@ const collectInputImages = async (directory) => {
 };
 
 const analyzeAlpha = async (inputPath) => {
-  const { data, info } = await sharp(inputPath).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const { data, info } = await sharp(inputPath)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
   let transparent = 0;
   let partial = 0;
   let opaque = 0;
@@ -112,7 +124,7 @@ const analyzeAlpha = async (inputPath) => {
           left: minX,
           top: minY,
           width: maxX - minX + 1,
-          height: maxY - minY + 1
+          height: maxY - minY + 1,
         };
 
   let transparentInsideCrop = 0;
@@ -132,14 +144,16 @@ const analyzeAlpha = async (inputPath) => {
     partialPct: total === 0 ? 0 : (partial / total) * 100,
     opaquePct: total === 0 ? 0 : (opaque / total) * 100,
     cropBox,
-    transparentInsideCrop
+    transparentInsideCrop,
   };
 };
 
 const getImageProfile = async (inputPath) => {
   const metadata = await sharp(inputPath, { animated: true }).metadata();
   const fileBytes = (await fsp.stat(inputPath)).size;
-  const alphaAnalysis = metadata.hasAlpha ? await analyzeAlpha(inputPath) : null;
+  const alphaAnalysis = metadata.hasAlpha
+    ? await analyzeAlpha(inputPath)
+    : null;
 
   const canTrimTransparentBorder =
     Boolean(alphaAnalysis?.cropBox) &&
@@ -158,24 +172,27 @@ const getImageProfile = async (inputPath) => {
 
   const trimmedWidth = preprocess.extract?.width ?? metadata.width ?? 0;
   const trimmedHeight = preprocess.extract?.height ?? metadata.height ?? 0;
-  const effectiveHasAlpha = canTreatAsOpaqueAfterTrim ? false : (metadata.hasAlpha ?? false);
+  const effectiveHasAlpha = canTreatAsOpaqueAfterTrim
+    ? false
+    : (metadata.hasAlpha ?? false);
   const maxDimension = Math.max(trimmedWidth, trimmedHeight);
-  const isUiLike = maxDimension <= uiAssetMaxDimension || fileBytes <= uiAssetMaxBytes;
+  const isUiLike =
+    maxDimension <= uiAssetMaxDimension || fileBytes <= uiAssetMaxBytes;
   const needsDownscale = !isUiLike && maxDimension > largeAssetMinDimension;
 
   if (needsDownscale) {
     preprocess.resize = {
       width: trimmedWidth >= trimmedHeight ? largeAssetMinDimension : undefined,
       height: trimmedHeight > trimmedWidth ? largeAssetMinDimension : undefined,
-      fit: "inside",
-      withoutEnlargement: true
+      fit: 'inside',
+      withoutEnlargement: true,
     };
   }
 
   return {
     inputPath,
     inputBytes: fileBytes,
-    format: metadata.format ?? "unknown",
+    format: metadata.format ?? 'unknown',
     width: metadata.width ?? 0,
     height: metadata.height ?? 0,
     trimmedWidth,
@@ -184,7 +201,7 @@ const getImageProfile = async (inputPath) => {
     effectiveHasAlpha,
     alphaAnalysis,
     isUiLike,
-    preprocess
+    preprocess,
   };
 };
 
@@ -199,7 +216,7 @@ const buildPreparedSource = async (profile, tempDir) => {
     pipeline = pipeline.resize(profile.preprocess.resize);
   }
 
-  const preparedPath = path.join(tempDir, "prepared.png");
+  const preparedPath = path.join(tempDir, 'prepared.png');
   await pipeline.png().toFile(preparedPath);
   return preparedPath;
 };
@@ -207,13 +224,17 @@ const buildPreparedSource = async (profile, tempDir) => {
 const parseCwebpMetric = (stderr) => {
   const ssimMatch = stderr.match(/Total:([0-9.]+)/);
   return {
-    ssim: ssimMatch ? Number(ssimMatch[1]) : null
+    ssim: ssimMatch ? Number(ssimMatch[1]) : null,
   };
 };
 
 const buildButteraugliProxy = async (imagePath) =>
   sharp(imagePath)
-    .resize({ width: largeAssetButteraugliProxyWidth, fit: "inside", withoutEnlargement: true })
+    .resize({
+      width: largeAssetButteraugliProxyWidth,
+      fit: 'inside',
+      withoutEnlargement: true,
+    })
     .ensureAlpha()
     .raw()
     .toBuffer({ resolveWithObject: true });
@@ -221,17 +242,23 @@ const buildButteraugliProxy = async (imagePath) =>
 const compareWithButteraugli = (left, right) =>
   butteraugli(
     { data: left.data, width: left.info.width, height: left.info.height },
-    { data: right.data, width: right.info.width, height: right.info.height }
+    { data: right.data, width: right.info.width, height: right.info.height },
   );
 
 const runCwebp = async (preparedInputPath, args, tempDir, outputName) => {
   const outputPath = path.join(tempDir, outputName);
-  const result = spawnSync(cwebp, [preparedInputPath, ...args, "-print_ssim", "-o", outputPath], {
-    encoding: "utf8"
-  });
+  const result = spawnSync(
+    cwebp,
+    [preparedInputPath, ...args, '-print_ssim', '-o', outputPath],
+    {
+      encoding: 'utf8',
+    },
+  );
 
   if (result.status !== 0) {
-    throw new Error(result.stderr || `cwebp failed with status ${result.status}`);
+    throw new Error(
+      result.stderr || `cwebp failed with status ${result.status}`,
+    );
   }
 
   const metrics = parseCwebpMetric(result.stderr);
@@ -241,77 +268,99 @@ const runCwebp = async (preparedInputPath, args, tempDir, outputName) => {
   return {
     outputBuffer,
     bytes,
-    ssim: metrics.ssim
+    ssim: metrics.ssim,
   };
 };
 
 const buildUiCandidatePlans = (profile) => {
-  const alphaArgs = profile.effectiveHasAlpha ? ["-alpha_q", "100", "-exact"] : [];
+  const alphaArgs = profile.effectiveHasAlpha
+    ? ['-alpha_q', '100', '-exact']
+    : [];
+  const commonArgs = ['-m', '6', '-mt', '-af', '-sharp_yuv'];
 
   return [
     {
-      strategy: "lossless-ui",
-      args: ["-lossless", "-m", "6", "-mt", ...alphaArgs]
+      strategy: 'lossless-ui',
+      args: ['-lossless', ...commonArgs, ...alphaArgs],
     },
     {
-      strategy: "near-lossless-ui-100",
-      args: ["-near_lossless", "100", "-m", "6", "-mt", ...alphaArgs]
+      strategy: 'near-lossless-ui-100',
+      args: ['-near_lossless', '100', ...commonArgs, ...alphaArgs],
     },
     {
-      strategy: "near-lossless-ui-80",
-      args: ["-near_lossless", "80", "-m", "6", "-mt", ...alphaArgs]
-    }
+      strategy: 'near-lossless-ui-80',
+      args: ['-near_lossless', '80', ...commonArgs, ...alphaArgs],
+    },
+    {
+      strategy: 'ui-lossy-q100-sns80',
+      args: ['-q', '100', '-sns', '80', ...commonArgs, ...alphaArgs],
+    },
+    {
+      strategy: 'ui-lossy-q95-sns80',
+      args: ['-q', '95', '-sns', '80', ...commonArgs, ...alphaArgs],
+    },
   ];
 };
 
-const buildLargeAssetCandidatePlans = () => [
-  {
-    strategy: "large-art-q100",
-    args: ["-preset", "picture", "-q", "100", "-m", "6", "-mt", "-af", "-sharp_yuv"]
-  },
-  {
-    strategy: "large-art-q96",
-    args: ["-preset", "picture", "-q", "96", "-m", "6", "-mt", "-af", "-sharp_yuv"]
-  },
-  {
-    strategy: "large-art-q94",
-    args: ["-preset", "picture", "-q", "94", "-m", "6", "-mt", "-af", "-sharp_yuv"]
-  },
-  {
-    strategy: "large-art-q92",
-    args: ["-preset", "picture", "-q", "92", "-m", "6", "-mt", "-af", "-sharp_yuv"]
-  },
-  {
-    strategy: "large-art-q90",
-    args: ["-preset", "picture", "-q", "90", "-m", "6", "-mt", "-af", "-sharp_yuv"]
-  },
-  {
-    strategy: "large-art-q88",
-    args: ["-preset", "picture", "-q", "88", "-m", "6", "-mt", "-af", "-sharp_yuv"]
-  },
-  {
-    strategy: "large-art-q86",
-    args: ["-preset", "picture", "-q", "86", "-m", "6", "-mt", "-af", "-sharp_yuv"]
+const buildLargeAssetCandidatePlans = () => {
+  const qualities = [100, 96, 94, 92, 90, 88, 86];
+  const snsStrengths = [80, 50];
+  const plans = [];
+
+  for (const quality of qualities) {
+    for (const sns of snsStrengths) {
+      plans.push({
+        strategy: `large-art-q${quality}-sns${sns}`,
+        args: [
+          '-preset',
+          'picture',
+          '-q',
+          String(quality),
+          '-sns',
+          String(sns),
+          '-m',
+          '6',
+          '-mt',
+          '-af',
+          '-sharp_yuv',
+        ],
+      });
+    }
   }
-];
+
+  return plans;
+};
 
 const evaluateCandidates = async (profile, preparedInputPath, tempDir) => {
-  const plans = profile.isUiLike || profile.effectiveHasAlpha
-    ? buildUiCandidatePlans(profile)
-    : buildLargeAssetCandidatePlans();
+  const plans =
+    profile.isUiLike || profile.effectiveHasAlpha
+      ? buildUiCandidatePlans(profile)
+      : buildLargeAssetCandidatePlans();
 
   const candidates = [];
   const originalButteraugliProxy =
-    profile.isUiLike || profile.effectiveHasAlpha ? null : await buildButteraugliProxy(preparedInputPath);
+    profile.isUiLike || profile.effectiveHasAlpha
+      ? null
+      : await buildButteraugliProxy(preparedInputPath);
 
   for (const [index, plan] of plans.entries()) {
-    const candidate = await runCwebp(preparedInputPath, plan.args, tempDir, `candidate-${index}.webp`);
+    const candidate = await runCwebp(
+      preparedInputPath,
+      plan.args,
+      tempDir,
+      `candidate-${index}.webp`,
+    );
     const butteraugliScore =
       originalButteraugliProxy === null
         ? null
-        : compareWithButteraugli(originalButteraugliProxy, await buildButteraugliProxy(path.join(tempDir, `candidate-${index}.webp`)));
+        : compareWithButteraugli(
+            originalButteraugliProxy,
+            await buildButteraugliProxy(
+              path.join(tempDir, `candidate-${index}.webp`),
+            ),
+          );
     log(
-      `${path.basename(profile.inputPath)} -> ${plan.strategy} | ${(candidate.bytes / 1024).toFixed(1)} KiB | SSIM ${candidate.ssim ?? "n/a"}${butteraugliScore === null ? "" : ` | Butteraugli ${butteraugliScore.toFixed(3)}`}`
+      `${path.basename(profile.inputPath)} -> ${plan.strategy} | ${(candidate.bytes / 1024).toFixed(1)} KiB | SSIM ${candidate.ssim ?? 'n/a'}${butteraugliScore === null ? '' : ` | Butteraugli ${butteraugliScore.toFixed(3)}`}`,
     );
 
     candidates.push({
@@ -320,7 +369,7 @@ const evaluateCandidates = async (profile, preparedInputPath, tempDir) => {
       bytes: candidate.bytes,
       ssim: candidate.ssim,
       butteraugli: butteraugliScore,
-      outputBuffer: candidate.outputBuffer
+      outputBuffer: candidate.outputBuffer,
     });
   }
 
@@ -331,39 +380,61 @@ const selectBestCandidate = (profile, candidates) => {
   if (profile.isUiLike || profile.effectiveHasAlpha) {
     const acceptable = candidates
       .filter((candidate) => (candidate.ssim ?? 0) >= uiSsimThreshold)
-      .sort((left, right) => left.bytes - right.bytes || (right.ssim ?? 0) - (left.ssim ?? 0));
+      .sort(
+        (left, right) =>
+          left.bytes - right.bytes || (right.ssim ?? 0) - (left.ssim ?? 0),
+      );
 
     return {
-      strategyType: "ui-perceptual-threshold",
+      strategyType: 'ui-perceptual-threshold',
       threshold: uiSsimThreshold,
-      selected: acceptable[0] ?? [...candidates].sort((left, right) => left.bytes - right.bytes)[0]
+      selected:
+        acceptable[0] ??
+        [...candidates].sort((left, right) => left.bytes - right.bytes)[0],
     };
   }
 
-  const baseline = candidates.find((candidate) => candidate.strategy === "large-art-q100") ?? candidates[0];
-  const bestButteraugli = Math.min(...candidates.map((candidate) => candidate.butteraugli ?? Number.POSITIVE_INFINITY));
+  const baseline =
+    candidates.find(
+      (candidate) => candidate.strategy === 'large-art-q100-sns80',
+    ) ??
+    candidates.find(
+      (candidate) => candidate.strategy === 'large-art-q100-sns50',
+    ) ??
+    candidates[0];
+  const bestButteraugli = Math.min(
+    ...candidates.map(
+      (candidate) => candidate.butteraugli ?? Number.POSITIVE_INFINITY,
+    ),
+  );
   const threshold = bestButteraugli + largeAssetButteraugliDelta;
   const acceptable = candidates
-    .filter((candidate) => (candidate.butteraugli ?? Number.POSITIVE_INFINITY) <= threshold)
+    .filter(
+      (candidate) =>
+        (candidate.butteraugli ?? Number.POSITIVE_INFINITY) <= threshold,
+    )
     .sort(
       (left, right) =>
         left.bytes - right.bytes ||
-        (left.butteraugli ?? Number.POSITIVE_INFINITY) - (right.butteraugli ?? Number.POSITIVE_INFINITY)
+        (left.butteraugli ?? Number.POSITIVE_INFINITY) -
+          (right.butteraugli ?? Number.POSITIVE_INFINITY),
     );
 
   return {
-    strategyType: "large-art-butteraugli-proxy",
+    strategyType: 'large-art-butteraugli-proxy',
     baselineSsim: baseline.ssim,
     baselineButteraugli: baseline.butteraugli,
     threshold,
-    selected: acceptable[0] ?? baseline
+    selected: acceptable[0] ?? baseline,
   };
 };
 
 const writeOutput = async (inputPath, outputBuffer) => {
-  const relativeDirectory = path.relative(testDir, path.dirname(inputPath));
+  const relativeDirectory = path.relative(inputDir, path.dirname(inputPath));
   const targetDirectory =
-    relativeDirectory && relativeDirectory !== "." ? path.join(outputDir, relativeDirectory) : outputDir;
+    relativeDirectory && relativeDirectory !== '.'
+      ? path.join(outputDir, relativeDirectory)
+      : outputDir;
   await fsp.mkdir(targetDirectory, { recursive: true });
 
   const baseName = path.basename(inputPath, path.extname(inputPath));
@@ -378,47 +449,55 @@ const stripCandidateBuffers = (candidates) =>
 const main = async () => {
   await ensureOutputDirectory();
 
-  const inputImages = await collectInputImages(testDir);
+  const inputImages = await collectInputImages(inputDir);
   if (inputImages.length === 0) {
-    throw new Error(`No supported input images were found under ${testDir}`);
+    throw new Error(`No supported input images were found under ${inputDir}`);
   }
 
   const summary = {
     generatedAt: new Date().toISOString(),
-    inputRoot: testDir,
+    inputRoot: inputDir,
     outputRoot: outputDir,
     strategy: {
-      outputs: ["webp"],
-      encoder: "cwebp",
-      uiMetric: "cwebp -print_ssim",
+      outputs: ['webp'],
+      encoder: 'cwebp',
+      uiMetric: 'cwebp -print_ssim',
       largeAssetMetric: `Butteraugli proxy search at ${largeAssetButteraugliProxyWidth}px wide`,
       uiAssets: `Pick the smallest candidate whose SSIM stays at or above ${uiSsimThreshold}.`,
       largeAssets: `Trim transparent border, resize long edge to ${largeAssetMinDimension}px when larger, then pick the smallest candidate within ${largeAssetButteraugliDelta.toFixed(2)} Butteraugli distance of the best candidate on the ${largeAssetButteraugliProxyWidth}px proxy.`,
-      note:
-        "Near-99% quality and near-99% size reduction cannot be guaranteed simultaneously for every source image. This pipeline uses a stronger practical game-asset tradeoff."
+      note: 'Near-99% quality and near-99% size reduction cannot be guaranteed simultaneously for every source image. This pipeline uses a stronger practical game-asset tradeoff.',
     },
     encoderRuntime: {
       cwebpPath: cwebp,
       sharpConcurrency: sharp.concurrency(),
-      sharpSimd: sharp.simd()
+      sharpSimd: sharp.simd(),
     },
-    files: []
+    files: [],
   };
 
   for (const inputPath of inputImages) {
     const profile = await getImageProfile(inputPath);
-    const tempDir = await fsp.mkdtemp(path.join(os.tmpdir(), "zun-cwebp-"));
+    const tempDir = await fsp.mkdtemp(path.join(os.tmpdir(), 'zun-cwebp-'));
 
     try {
       const preparedInputPath = await buildPreparedSource(profile, tempDir);
       log(
-        `Processing ${path.relative(testDir, inputPath)} | ${profile.width}x${profile.height} -> ${profile.trimmedWidth}x${profile.trimmedHeight}${profile.preprocess.resize ? " -> resized" : ""} | alpha=${profile.hasAlpha} effectiveAlpha=${profile.effectiveHasAlpha} uiLike=${profile.isUiLike}`
+        `Processing ${path.relative(inputDir, inputPath)} | ${profile.width}x${profile.height} -> ${profile.trimmedWidth}x${profile.trimmedHeight}${profile.preprocess.resize ? ' -> resized' : ''} | alpha=${profile.hasAlpha} effectiveAlpha=${profile.effectiveHasAlpha} uiLike=${profile.isUiLike}`,
       );
 
-      const candidates = await evaluateCandidates(profile, preparedInputPath, tempDir);
+      const candidates = await evaluateCandidates(
+        profile,
+        preparedInputPath,
+        tempDir,
+      );
       const decision = selectBestCandidate(profile, candidates);
-      const outputPath = await writeOutput(inputPath, decision.selected.outputBuffer);
-      const outputMetadata = await sharp(decision.selected.outputBuffer).metadata();
+      const outputPath = await writeOutput(
+        inputPath,
+        decision.selected.outputBuffer,
+      );
+      const outputMetadata = await sharp(
+        decision.selected.outputBuffer,
+      ).metadata();
 
       summary.files.push({
         inputPath,
@@ -426,7 +505,7 @@ const main = async () => {
         original: {
           width: profile.width,
           height: profile.height,
-          hasAlpha: profile.hasAlpha
+          hasAlpha: profile.hasAlpha,
         },
         preprocess: {
           trimmed: Boolean(profile.preprocess.extract),
@@ -434,46 +513,54 @@ const main = async () => {
           resized: Boolean(profile.preprocess.resize),
           resize: profile.preprocess.resize ?? null,
           effectiveHasAlpha: profile.effectiveHasAlpha,
-          isUiLike: profile.isUiLike
+          isUiLike: profile.isUiLike,
         },
         selection: {
           type: decision.strategyType,
           baselineSsim: decision.baselineSsim ?? null,
           baselineButteraugli: decision.baselineButteraugli ?? null,
-          threshold: decision.threshold
+          threshold: decision.threshold,
         },
         output: {
-          format: "webp",
+          format: 'webp',
           width: outputMetadata.width ?? profile.trimmedWidth,
           height: outputMetadata.height ?? profile.trimmedHeight,
           bytes: decision.selected.bytes,
-          reductionPct: Number(((1 - decision.selected.bytes / profile.inputBytes) * 100).toFixed(2)),
+          reductionPct: Number(
+            ((1 - decision.selected.bytes / profile.inputBytes) * 100).toFixed(
+              2,
+            ),
+          ),
           strategy: decision.selected.strategy,
           ssim: decision.selected.ssim,
           butteraugli: decision.selected.butteraugli,
           encoderArgs: decision.selected.args,
-          outputPath
+          outputPath,
         },
-        candidates: stripCandidateBuffers(candidates)
+        candidates: stripCandidateBuffers(candidates),
       });
     } finally {
-      await fsp.rm(tempDir, { recursive: true, force: true }).catch(() => undefined);
+      await fsp
+        .rm(tempDir, { recursive: true, force: true })
+        .catch(() => undefined);
     }
   }
 
-  const reportPath = path.join(outputDir, "compression-report.json");
+  const reportPath = path.join(outputDir, 'compression-report.json');
   await fsp.writeFile(reportPath, JSON.stringify(summary, null, 2));
   log(`Done. Summary written to ${reportPath}`);
 };
 
 try {
-  if (!fs.existsSync(testDir)) {
-    throw new Error(`Missing test directory: ${testDir}`);
+  if (!fs.existsSync(inputDir)) {
+    throw new Error(`Missing input directory: ${inputDir}`);
   }
 
   await main();
   process.exit(0);
 } catch (error) {
-  console.error(`\n[compress] ERROR: ${error instanceof Error ? error.message : String(error)}`);
+  console.error(
+    `\n[compress] ERROR: ${error instanceof Error ? error.message : String(error)}`,
+  );
   process.exit(1);
 }

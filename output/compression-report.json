@@ -1,0 +1,1671 @@
+{
+  "generatedAt": "2026-04-08T09:03:44.506Z",
+  "inputRoot": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\input",
+  "outputRoot": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\output",
+  "strategy": {
+    "outputs": [
+      "webp"
+    ],
+    "encoder": "cwebp",
+    "uiMetric": "cwebp -print_ssim",
+    "largeAssetMetric": "Butteraugli proxy search at 640px wide",
+    "uiAssets": "Pick the smallest candidate whose SSIM stays at or above 98.5.",
+    "largeAssets": "Trim transparent border, resize long edge to 1920px when larger, then pick the smallest candidate within 0.07 Butteraugli distance of the best candidate on the 640px proxy.",
+    "note": "Near-99% quality and near-99% size reduction cannot be guaranteed simultaneously for every source image. This pipeline uses a stronger practical game-asset tradeoff."
+  },
+  "encoderRuntime": {
+    "cwebpPath": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\node_modules\\cwebp-bin\\vendor\\cwebp.exe",
+    "sharpConcurrency": 8,
+    "sharpSimd": true
+  },
+  "files": [
+    {
+      "inputPath": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\input\\background\\image.png",
+      "inputBytes": 4167547,
+      "original": {
+        "width": 1925,
+        "height": 1080,
+        "hasAlpha": false
+      },
+      "preprocess": {
+        "trimmed": false,
+        "extract": null,
+        "resized": true,
+        "resize": {
+          "width": 1920,
+          "fit": "inside",
+          "withoutEnlargement": true
+        },
+        "effectiveHasAlpha": false,
+        "isUiLike": false
+      },
+      "selection": {
+        "type": "large-art-butteraugli-proxy",
+        "baselineSsim": 17.35,
+        "baselineButteraugli": 2.830493211746216,
+        "threshold": 2.7771154117584227
+      },
+      "output": {
+        "format": "webp",
+        "width": 1920,
+        "height": 1077,
+        "bytes": 253842,
+        "reductionPct": 93.91,
+        "strategy": "large-art-q86-sns80",
+        "ssim": 14.93,
+        "butteraugli": 2.7745680809020996,
+        "encoderArgs": [
+          "-preset",
+          "picture",
+          "-q",
+          "86",
+          "-sns",
+          "80",
+          "-m",
+          "6",
+          "-mt",
+          "-af",
+          "-sharp_yuv"
+        ],
+        "outputPath": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\output\\background\\image.webp"
+      },
+      "candidates": [
+        {
+          "strategy": "large-art-q100-sns80",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "100",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 695934,
+          "ssim": 17.35,
+          "butteraugli": 2.830493211746216
+        },
+        {
+          "strategy": "large-art-q100-sns50",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "100",
+            "-sns",
+            "50",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 695636,
+          "ssim": 17.35,
+          "butteraugli": 2.822208881378174
+        },
+        {
+          "strategy": "large-art-q96-sns80",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "96",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 499536,
+          "ssim": 16.86,
+          "butteraugli": 2.779146194458008
+        },
+        {
+          "strategy": "large-art-q96-sns50",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "96",
+            "-sns",
+            "50",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 505064,
+          "ssim": 16.88,
+          "butteraugli": 2.7846033573150635
+        },
+        {
+          "strategy": "large-art-q94-sns80",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "94",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 428066,
+          "ssim": 16.55,
+          "butteraugli": 2.8058454990386963
+        },
+        {
+          "strategy": "large-art-q94-sns50",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "94",
+            "-sns",
+            "50",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 427570,
+          "ssim": 16.5,
+          "butteraugli": 2.758587598800659
+        },
+        {
+          "strategy": "large-art-q92-sns80",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "92",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 375962,
+          "ssim": 16.19,
+          "butteraugli": 2.798057794570923
+        },
+        {
+          "strategy": "large-art-q92-sns50",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "92",
+            "-sns",
+            "50",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 374198,
+          "ssim": 16.17,
+          "butteraugli": 2.8217484951019287
+        },
+        {
+          "strategy": "large-art-q90-sns80",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "90",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 317918,
+          "ssim": 15.7,
+          "butteraugli": 2.83359694480896
+        },
+        {
+          "strategy": "large-art-q90-sns50",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "90",
+            "-sns",
+            "50",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 324374,
+          "ssim": 15.75,
+          "butteraugli": 2.819753408432007
+        },
+        {
+          "strategy": "large-art-q88-sns80",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "88",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 283028,
+          "ssim": 15.33,
+          "butteraugli": 2.7460029125213623
+        },
+        {
+          "strategy": "large-art-q88-sns50",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "88",
+            "-sns",
+            "50",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 285548,
+          "ssim": 15.3,
+          "butteraugli": 2.915738582611084
+        },
+        {
+          "strategy": "large-art-q86-sns80",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "86",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 253842,
+          "ssim": 14.93,
+          "butteraugli": 2.7745680809020996
+        },
+        {
+          "strategy": "large-art-q86-sns50",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "86",
+            "-sns",
+            "50",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 258108,
+          "ssim": 14.97,
+          "butteraugli": 2.707115411758423
+        }
+      ]
+    },
+    {
+      "inputPath": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\input\\background\\Mi_and_An_Game_2_style.png",
+      "inputBytes": 9758839,
+      "original": {
+        "width": 3501,
+        "height": 1964,
+        "hasAlpha": true
+      },
+      "preprocess": {
+        "trimmed": true,
+        "extract": {
+          "left": 0,
+          "top": 1,
+          "width": 3500,
+          "height": 1963
+        },
+        "resized": true,
+        "resize": {
+          "width": 1920,
+          "fit": "inside",
+          "withoutEnlargement": true
+        },
+        "effectiveHasAlpha": false,
+        "isUiLike": false
+      },
+      "selection": {
+        "type": "large-art-butteraugli-proxy",
+        "baselineSsim": 14.22,
+        "baselineButteraugli": 3.564762592315674,
+        "threshold": 3.549600429534912
+      },
+      "output": {
+        "format": "webp",
+        "width": 1920,
+        "height": 1077,
+        "bytes": 372778,
+        "reductionPct": 96.18,
+        "strategy": "large-art-q86-sns50",
+        "ssim": 12.77,
+        "butteraugli": 3.5127127170562744,
+        "encoderArgs": [
+          "-preset",
+          "picture",
+          "-q",
+          "86",
+          "-sns",
+          "50",
+          "-m",
+          "6",
+          "-mt",
+          "-af",
+          "-sharp_yuv"
+        ],
+        "outputPath": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\output\\background\\Mi_and_An_Game_2_style.webp"
+      },
+      "candidates": [
+        {
+          "strategy": "large-art-q100-sns80",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "100",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 829206,
+          "ssim": 14.22,
+          "butteraugli": 3.564762592315674
+        },
+        {
+          "strategy": "large-art-q100-sns50",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "100",
+            "-sns",
+            "50",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 829046,
+          "ssim": 14.21,
+          "butteraugli": 3.5557806491851807
+        },
+        {
+          "strategy": "large-art-q96-sns80",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "96",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 664056,
+          "ssim": 13.93,
+          "butteraugli": 3.5564191341400146
+        },
+        {
+          "strategy": "large-art-q96-sns50",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "96",
+            "-sns",
+            "50",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 640336,
+          "ssim": 13.89,
+          "butteraugli": 3.586383819580078
+        },
+        {
+          "strategy": "large-art-q94-sns80",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "94",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 574754,
+          "ssim": 13.73,
+          "butteraugli": 3.668496608734131
+        },
+        {
+          "strategy": "large-art-q94-sns50",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "94",
+            "-sns",
+            "50",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 573776,
+          "ssim": 13.69,
+          "butteraugli": 3.592350959777832
+        },
+        {
+          "strategy": "large-art-q92-sns80",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "92",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 501748,
+          "ssim": 13.47,
+          "butteraugli": 3.5235342979431152
+        },
+        {
+          "strategy": "large-art-q92-sns50",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "92",
+            "-sns",
+            "50",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 501910,
+          "ssim": 13.46,
+          "butteraugli": 3.539030075073242
+        },
+        {
+          "strategy": "large-art-q90-sns80",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "90",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 456502,
+          "ssim": 13.27,
+          "butteraugli": 3.479600429534912
+        },
+        {
+          "strategy": "large-art-q90-sns50",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "90",
+            "-sns",
+            "50",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 449454,
+          "ssim": 13.24,
+          "butteraugli": 3.553892135620117
+        },
+        {
+          "strategy": "large-art-q88-sns80",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "88",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 406372,
+          "ssim": 13.01,
+          "butteraugli": 3.553494691848755
+        },
+        {
+          "strategy": "large-art-q88-sns50",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "88",
+            "-sns",
+            "50",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 407182,
+          "ssim": 12.99,
+          "butteraugli": 3.5247952938079834
+        },
+        {
+          "strategy": "large-art-q86-sns80",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "86",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 370184,
+          "ssim": 12.76,
+          "butteraugli": 3.5720834732055664
+        },
+        {
+          "strategy": "large-art-q86-sns50",
+          "args": [
+            "-preset",
+            "picture",
+            "-q",
+            "86",
+            "-sns",
+            "50",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv"
+          ],
+          "bytes": 372778,
+          "ssim": 12.77,
+          "butteraugli": 3.5127127170562744
+        }
+      ]
+    },
+    {
+      "inputPath": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\input\\icon\\công AP.png",
+      "inputBytes": 15360,
+      "original": {
+        "width": 436,
+        "height": 436,
+        "hasAlpha": true
+      },
+      "preprocess": {
+        "trimmed": false,
+        "extract": null,
+        "resized": false,
+        "resize": null,
+        "effectiveHasAlpha": true,
+        "isUiLike": true
+      },
+      "selection": {
+        "type": "ui-perceptual-threshold",
+        "baselineSsim": null,
+        "baselineButteraugli": null,
+        "threshold": 98.5
+      },
+      "output": {
+        "format": "webp",
+        "width": 436,
+        "height": 436,
+        "bytes": 7062,
+        "reductionPct": 54.02,
+        "strategy": "lossless-ui",
+        "ssim": 99,
+        "butteraugli": null,
+        "encoderArgs": [
+          "-lossless",
+          "-m",
+          "6",
+          "-mt",
+          "-af",
+          "-sharp_yuv",
+          "-alpha_q",
+          "100",
+          "-exact"
+        ],
+        "outputPath": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\output\\icon\\công AP.webp"
+      },
+      "candidates": [
+        {
+          "strategy": "lossless-ui",
+          "args": [
+            "-lossless",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 7062,
+          "ssim": 99,
+          "butteraugli": null
+        },
+        {
+          "strategy": "near-lossless-ui-100",
+          "args": [
+            "-near_lossless",
+            "100",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 7062,
+          "ssim": 99,
+          "butteraugli": null
+        },
+        {
+          "strategy": "near-lossless-ui-80",
+          "args": [
+            "-near_lossless",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 7016,
+          "ssim": 12.14,
+          "butteraugli": null
+        },
+        {
+          "strategy": "ui-lossy-q100-sns80",
+          "args": [
+            "-q",
+            "100",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 21854,
+          "ssim": 19.39,
+          "butteraugli": null
+        },
+        {
+          "strategy": "ui-lossy-q95-sns80",
+          "args": [
+            "-q",
+            "95",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 16580,
+          "ssim": 19.11,
+          "butteraugli": null
+        }
+      ]
+    },
+    {
+      "inputPath": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\input\\icon\\công VL.png",
+      "inputBytes": 12763,
+      "original": {
+        "width": 437,
+        "height": 436,
+        "hasAlpha": true
+      },
+      "preprocess": {
+        "trimmed": true,
+        "extract": {
+          "left": 1,
+          "top": 0,
+          "width": 435,
+          "height": 436
+        },
+        "resized": false,
+        "resize": null,
+        "effectiveHasAlpha": true,
+        "isUiLike": true
+      },
+      "selection": {
+        "type": "ui-perceptual-threshold",
+        "baselineSsim": null,
+        "baselineButteraugli": null,
+        "threshold": 98.5
+      },
+      "output": {
+        "format": "webp",
+        "width": 435,
+        "height": 436,
+        "bytes": 6044,
+        "reductionPct": 52.64,
+        "strategy": "lossless-ui",
+        "ssim": 99,
+        "butteraugli": null,
+        "encoderArgs": [
+          "-lossless",
+          "-m",
+          "6",
+          "-mt",
+          "-af",
+          "-sharp_yuv",
+          "-alpha_q",
+          "100",
+          "-exact"
+        ],
+        "outputPath": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\output\\icon\\công VL.webp"
+      },
+      "candidates": [
+        {
+          "strategy": "lossless-ui",
+          "args": [
+            "-lossless",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 6044,
+          "ssim": 99,
+          "butteraugli": null
+        },
+        {
+          "strategy": "near-lossless-ui-100",
+          "args": [
+            "-near_lossless",
+            "100",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 6044,
+          "ssim": 99,
+          "butteraugli": null
+        },
+        {
+          "strategy": "near-lossless-ui-80",
+          "args": [
+            "-near_lossless",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 5296,
+          "ssim": 12.18,
+          "butteraugli": null
+        },
+        {
+          "strategy": "ui-lossy-q100-sns80",
+          "args": [
+            "-q",
+            "100",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 17062,
+          "ssim": 26.54,
+          "butteraugli": null
+        },
+        {
+          "strategy": "ui-lossy-q95-sns80",
+          "args": [
+            "-q",
+            "95",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 13544,
+          "ssim": 26.14,
+          "butteraugli": null
+        }
+      ]
+    },
+    {
+      "inputPath": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\input\\icon\\Máu.png",
+      "inputBytes": 15436,
+      "original": {
+        "width": 437,
+        "height": 436,
+        "hasAlpha": true
+      },
+      "preprocess": {
+        "trimmed": true,
+        "extract": {
+          "left": 0,
+          "top": 0,
+          "width": 436,
+          "height": 436
+        },
+        "resized": false,
+        "resize": null,
+        "effectiveHasAlpha": true,
+        "isUiLike": true
+      },
+      "selection": {
+        "type": "ui-perceptual-threshold",
+        "baselineSsim": null,
+        "baselineButteraugli": null,
+        "threshold": 98.5
+      },
+      "output": {
+        "format": "webp",
+        "width": 436,
+        "height": 436,
+        "bytes": 6508,
+        "reductionPct": 57.84,
+        "strategy": "lossless-ui",
+        "ssim": 99,
+        "butteraugli": null,
+        "encoderArgs": [
+          "-lossless",
+          "-m",
+          "6",
+          "-mt",
+          "-af",
+          "-sharp_yuv",
+          "-alpha_q",
+          "100",
+          "-exact"
+        ],
+        "outputPath": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\output\\icon\\Máu.webp"
+      },
+      "candidates": [
+        {
+          "strategy": "lossless-ui",
+          "args": [
+            "-lossless",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 6508,
+          "ssim": 99,
+          "butteraugli": null
+        },
+        {
+          "strategy": "near-lossless-ui-100",
+          "args": [
+            "-near_lossless",
+            "100",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 6508,
+          "ssim": 99,
+          "butteraugli": null
+        },
+        {
+          "strategy": "near-lossless-ui-80",
+          "args": [
+            "-near_lossless",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 6584,
+          "ssim": 12.14,
+          "butteraugli": null
+        },
+        {
+          "strategy": "ui-lossy-q100-sns80",
+          "args": [
+            "-q",
+            "100",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 20446,
+          "ssim": 18.97,
+          "butteraugli": null
+        },
+        {
+          "strategy": "ui-lossy-q95-sns80",
+          "args": [
+            "-q",
+            "95",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 15574,
+          "ssim": 18.81,
+          "butteraugli": null
+        }
+      ]
+    },
+    {
+      "inputPath": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\input\\icon\\Né.png",
+      "inputBytes": 20783,
+      "original": {
+        "width": 437,
+        "height": 436,
+        "hasAlpha": true
+      },
+      "preprocess": {
+        "trimmed": true,
+        "extract": {
+          "left": 1,
+          "top": 0,
+          "width": 435,
+          "height": 436
+        },
+        "resized": false,
+        "resize": null,
+        "effectiveHasAlpha": true,
+        "isUiLike": true
+      },
+      "selection": {
+        "type": "ui-perceptual-threshold",
+        "baselineSsim": null,
+        "baselineButteraugli": null,
+        "threshold": 98.5
+      },
+      "output": {
+        "format": "webp",
+        "width": 435,
+        "height": 436,
+        "bytes": 9234,
+        "reductionPct": 55.57,
+        "strategy": "lossless-ui",
+        "ssim": 99,
+        "butteraugli": null,
+        "encoderArgs": [
+          "-lossless",
+          "-m",
+          "6",
+          "-mt",
+          "-af",
+          "-sharp_yuv",
+          "-alpha_q",
+          "100",
+          "-exact"
+        ],
+        "outputPath": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\output\\icon\\Né.webp"
+      },
+      "candidates": [
+        {
+          "strategy": "lossless-ui",
+          "args": [
+            "-lossless",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 9234,
+          "ssim": 99,
+          "butteraugli": null
+        },
+        {
+          "strategy": "near-lossless-ui-100",
+          "args": [
+            "-near_lossless",
+            "100",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 9234,
+          "ssim": 99,
+          "butteraugli": null
+        },
+        {
+          "strategy": "near-lossless-ui-80",
+          "args": [
+            "-near_lossless",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 8260,
+          "ssim": 12.18,
+          "butteraugli": null
+        },
+        {
+          "strategy": "ui-lossy-q100-sns80",
+          "args": [
+            "-q",
+            "100",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 21396,
+          "ssim": 24.82,
+          "butteraugli": null
+        },
+        {
+          "strategy": "ui-lossy-q95-sns80",
+          "args": [
+            "-q",
+            "95",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 15916,
+          "ssim": 24.37,
+          "butteraugli": null
+        }
+      ]
+    },
+    {
+      "inputPath": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\input\\icon\\thủ AP.png",
+      "inputBytes": 15798,
+      "original": {
+        "width": 437,
+        "height": 436,
+        "hasAlpha": true
+      },
+      "preprocess": {
+        "trimmed": true,
+        "extract": {
+          "left": 1,
+          "top": 0,
+          "width": 435,
+          "height": 436
+        },
+        "resized": false,
+        "resize": null,
+        "effectiveHasAlpha": true,
+        "isUiLike": true
+      },
+      "selection": {
+        "type": "ui-perceptual-threshold",
+        "baselineSsim": null,
+        "baselineButteraugli": null,
+        "threshold": 98.5
+      },
+      "output": {
+        "format": "webp",
+        "width": 435,
+        "height": 436,
+        "bytes": 6206,
+        "reductionPct": 60.72,
+        "strategy": "lossless-ui",
+        "ssim": 99,
+        "butteraugli": null,
+        "encoderArgs": [
+          "-lossless",
+          "-m",
+          "6",
+          "-mt",
+          "-af",
+          "-sharp_yuv",
+          "-alpha_q",
+          "100",
+          "-exact"
+        ],
+        "outputPath": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\output\\icon\\thủ AP.webp"
+      },
+      "candidates": [
+        {
+          "strategy": "lossless-ui",
+          "args": [
+            "-lossless",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 6206,
+          "ssim": 99,
+          "butteraugli": null
+        },
+        {
+          "strategy": "near-lossless-ui-100",
+          "args": [
+            "-near_lossless",
+            "100",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 6206,
+          "ssim": 99,
+          "butteraugli": null
+        },
+        {
+          "strategy": "near-lossless-ui-80",
+          "args": [
+            "-near_lossless",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 6292,
+          "ssim": 12.2,
+          "butteraugli": null
+        },
+        {
+          "strategy": "ui-lossy-q100-sns80",
+          "args": [
+            "-q",
+            "100",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 20336,
+          "ssim": 20.23,
+          "butteraugli": null
+        },
+        {
+          "strategy": "ui-lossy-q95-sns80",
+          "args": [
+            "-q",
+            "95",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 15396,
+          "ssim": 20.02,
+          "butteraugli": null
+        }
+      ]
+    },
+    {
+      "inputPath": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\input\\icon\\thủ VL.png",
+      "inputBytes": 13657,
+      "original": {
+        "width": 437,
+        "height": 436,
+        "hasAlpha": true
+      },
+      "preprocess": {
+        "trimmed": true,
+        "extract": {
+          "left": 1,
+          "top": 0,
+          "width": 435,
+          "height": 436
+        },
+        "resized": false,
+        "resize": null,
+        "effectiveHasAlpha": true,
+        "isUiLike": true
+      },
+      "selection": {
+        "type": "ui-perceptual-threshold",
+        "baselineSsim": null,
+        "baselineButteraugli": null,
+        "threshold": 98.5
+      },
+      "output": {
+        "format": "webp",
+        "width": 435,
+        "height": 436,
+        "bytes": 5908,
+        "reductionPct": 56.74,
+        "strategy": "lossless-ui",
+        "ssim": 99,
+        "butteraugli": null,
+        "encoderArgs": [
+          "-lossless",
+          "-m",
+          "6",
+          "-mt",
+          "-af",
+          "-sharp_yuv",
+          "-alpha_q",
+          "100",
+          "-exact"
+        ],
+        "outputPath": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\output\\icon\\thủ VL.webp"
+      },
+      "candidates": [
+        {
+          "strategy": "lossless-ui",
+          "args": [
+            "-lossless",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 5908,
+          "ssim": 99,
+          "butteraugli": null
+        },
+        {
+          "strategy": "near-lossless-ui-100",
+          "args": [
+            "-near_lossless",
+            "100",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 5908,
+          "ssim": 99,
+          "butteraugli": null
+        },
+        {
+          "strategy": "near-lossless-ui-80",
+          "args": [
+            "-near_lossless",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 5418,
+          "ssim": 12.18,
+          "butteraugli": null
+        },
+        {
+          "strategy": "ui-lossy-q100-sns80",
+          "args": [
+            "-q",
+            "100",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 18554,
+          "ssim": 26.56,
+          "butteraugli": null
+        },
+        {
+          "strategy": "ui-lossy-q95-sns80",
+          "args": [
+            "-q",
+            "95",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 14668,
+          "ssim": 26.16,
+          "butteraugli": null
+        }
+      ]
+    },
+    {
+      "inputPath": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\input\\icon\\Tốc.png",
+      "inputBytes": 18093,
+      "original": {
+        "width": 436,
+        "height": 436,
+        "hasAlpha": true
+      },
+      "preprocess": {
+        "trimmed": false,
+        "extract": null,
+        "resized": false,
+        "resize": null,
+        "effectiveHasAlpha": true,
+        "isUiLike": true
+      },
+      "selection": {
+        "type": "ui-perceptual-threshold",
+        "baselineSsim": null,
+        "baselineButteraugli": null,
+        "threshold": 98.5
+      },
+      "output": {
+        "format": "webp",
+        "width": 436,
+        "height": 436,
+        "bytes": 8626,
+        "reductionPct": 52.32,
+        "strategy": "lossless-ui",
+        "ssim": 99,
+        "butteraugli": null,
+        "encoderArgs": [
+          "-lossless",
+          "-m",
+          "6",
+          "-mt",
+          "-af",
+          "-sharp_yuv",
+          "-alpha_q",
+          "100",
+          "-exact"
+        ],
+        "outputPath": "C:\\Users\\Zun\\Desktop\\Projects\\ZunImageCompression\\output\\icon\\Tốc.webp"
+      },
+      "candidates": [
+        {
+          "strategy": "lossless-ui",
+          "args": [
+            "-lossless",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 8626,
+          "ssim": 99,
+          "butteraugli": null
+        },
+        {
+          "strategy": "near-lossless-ui-100",
+          "args": [
+            "-near_lossless",
+            "100",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 8626,
+          "ssim": 99,
+          "butteraugli": null
+        },
+        {
+          "strategy": "near-lossless-ui-80",
+          "args": [
+            "-near_lossless",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 8834,
+          "ssim": 12.13,
+          "butteraugli": null
+        },
+        {
+          "strategy": "ui-lossy-q100-sns80",
+          "args": [
+            "-q",
+            "100",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 22728,
+          "ssim": 22.56,
+          "butteraugli": null
+        },
+        {
+          "strategy": "ui-lossy-q95-sns80",
+          "args": [
+            "-q",
+            "95",
+            "-sns",
+            "80",
+            "-m",
+            "6",
+            "-mt",
+            "-af",
+            "-sharp_yuv",
+            "-alpha_q",
+            "100",
+            "-exact"
+          ],
+          "bytes": 17434,
+          "ssim": 22.25,
+          "butteraugli": null
+        }
+      ]
+    }
+  ]
+}
