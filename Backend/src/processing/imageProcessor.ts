@@ -141,6 +141,7 @@ export class ImageProcessor {
     quality: number
   ): Promise<EncodeCandidate> {
     let pipeline = this.createBasePipeline(filePath, image, options);
+    const configuredEffort = options.output.effort;
 
     switch (format) {
       case "jpeg":
@@ -160,14 +161,15 @@ export class ImageProcessor {
       case "webp":
         pipeline = pipeline.webp({
           quality,
-          effort: options.output.effort,
+          effort: configuredEffort === undefined ? 6 : Math.min(configuredEffort, 6),
+          smartSubsample: true,
           lossless: options.output.lossless
         });
         break;
       case "avif":
         pipeline = pipeline.avif({
           quality,
-          effort: options.output.effort,
+          effort: configuredEffort ?? 9,
           lossless: options.output.lossless,
           chromaSubsampling: options.output.chromaSubsampling
         });
